@@ -1,4 +1,4 @@
-import {extname, isAbsolute} from 'path'
+import {extname} from 'path'
 import {getConfig} from './config.js'
 
 let initPromise
@@ -16,23 +16,23 @@ export async function initialize(data) {
   candidates = indexFiles.map(i => i.map(f => extname(f)).concat(i.map(f => `/${f}`)))
 }
 
-let relSpecs = ['.', '..'], prefixes = ['./', '../', 'file://', '.\\', '..\\']
-let extToSkip = ['.js', '.cjs', '.mjs', '.json', '.node', '.wasm'], empty = [[], []]
+let winAbsPath = /^[/\\]?[a-z]:[/\\]/i, relSpecs = ['.', '..']
+let specStarts = ['./', '../', '/', 'file://', 'https://', '.\\', '..\\', '\\']
+let knownExts = ['.js', '.cjs', '.mjs', '.json', '.node', '.wasm'], empty = [[], []]
 
 export async function resolve(specifier, context, nextResolve) {
-  let isAbs = isAbsolute(specifier)
+  let prefix = winAbsPath.test(specifier) ? 'file://' : ''
 
-  if (!isAbs && !relSpecs.includes(specifier) && !prefixes.some(p => specifier.startsWith(p))) {
+  if (!prefix && !relSpecs.includes(specifier) && !specStarts.some(p => specifier.startsWith(p))) {
     return await nextResolve(specifier)
   }
 
-  let selfURL = new URL((isAbs ? 'file://' : '') + specifier, context.parentURL).href
-  let isJson = (context.importAttributes ?? context.importAssertions)?.type === 'json'
+  let selfURL = new URL(prefix + specifier, context.parentURL).href
 
-  await initPromise
-  let postfixes = selfURL.endsWith('/') ? indexFiles : extToSkip.includes(extname(selfURL)) ? empty : candidates
+  let {type} = context.importAttributes ?? context.importAssertions
+  let postfixes = (await initPromise, selfURL.endsWith('/') ? indexFiles : knownExts.includes(extname(selfURL)) ? empty : candidates)
 
-  for (let postfix of postfixes[+isJson]) {
+  for (let postfix of postfixes[+(type === 'json')]) {
     try {
       return await nextResolve(selfURL + postfix)
     } catch {}
