@@ -19,18 +19,20 @@ export async function initialize(data) {
 let relSpecs = ['.', '..'], prefixes = ['./', '../', 'file://', '.\\', '..\\']
 let extToSkip = ['.js', '.cjs', '.mjs', '.json', '.node', '.wasm'], empty = [[], []]
 
-export async function resolve(specifier, {importAssertions, parentURL}, nextResolve) {
+export async function resolve(specifier, context, nextResolve) {
   let isAbs = isAbsolute(specifier)
 
   if (!isAbs && !relSpecs.includes(specifier) && !prefixes.some(p => specifier.startsWith(p))) {
     return await nextResolve(specifier)
   }
 
+  let selfURL = new URL((isAbs ? 'file://' : '') + specifier, context.parentURL).href
+  let isJson = (context.importAttributes ?? context.importAssertions)?.type === 'json'
+
   await initPromise
-  let selfURL = new URL((isAbs ? 'file://' : '') + specifier, parentURL).href
   let postfixes = selfURL.endsWith('/') ? indexFiles : extToSkip.includes(extname(selfURL)) ? empty : candidates
 
-  for (let postfix of postfixes[+(importAssertions?.type === 'json')]) {
+  for (let postfix of postfixes[+isJson]) {
     try {
       return await nextResolve(selfURL + postfix)
     } catch {}
