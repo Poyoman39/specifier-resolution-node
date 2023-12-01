@@ -1,4 +1,5 @@
 Node.js loader for import specifiers as file paths without extensions or as directory paths
+This is package intend to make the [extensionless project](https://www.npmjs.com/package/extensionless) works with [import-meta-resolve](https://www.npmjs.com/package/import-meta-resolve) algorithm so that its closer to the behavior of node.js 18 with --experimental-loader=specifier-resolution-node
 
 &nbsp;
 
