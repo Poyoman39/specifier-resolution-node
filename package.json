@@ -2,6 +2,11 @@
   "name": "specifier-resolution-node",
   "version": "0.0.1",
   "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./register": "./src/register.js"
+  },
   "engines": {
     "node": ">=20.0.0"
   },
@@ -41,5 +46,8 @@
     "eslint": "^8.24.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "npm-check": "^6.0.1"
+  },
+  "dependencies": {
+    "import-meta-resolve": "^4.0.0"
   }
 }

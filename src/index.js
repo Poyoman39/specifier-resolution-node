@@ -1,42 +1,77 @@
-import {extname} from 'path'
-import {getConfig} from './config.js'
+import { isBuiltin } from 'node:module';
+import { cwd } from 'node:process';
+import { pathToFileURL } from 'node:url';
+import { moduleResolve } from 'import-meta-resolve';
 
-let initPromise
-export function globalPreload({port}) {
-  port.onmessage = e => initPromise = initialize({argv1: e.data})
+const baseURL = pathToFileURL(`${cwd()}/`).href;
 
-  return 'port.postMessage(process.argv[1])'
-}
+const KNOWN_EXTS = [
+  '.js',
+  '.cjs',
+  '.mjs',
+  '.json',
+  '.node',
+  '.wasm',
+];
 
-let indexFiles, candidates
-export async function initialize(data) {
-  let {lookFor} = await getConfig(data)
+const INDEX_FILES = KNOWN_EXTS.map((knownExt) => (
+  `index${knownExt}`
+));
 
-  indexFiles = [lookFor.map(e => `index.${e}`), ['index.json']]
-  candidates = indexFiles.map(i => i.map(f => extname(f)).concat(i.map(f => `/${f}`)))
-}
+export async function resolve(specifier, context, next) {
+  const { parentURL = baseURL } = context;
 
-let winAbsPath = /^[/\\]?[a-z]:[/\\]/i, relSpecs = ['.', '..']
-let specStarts = ['./', '../', '/', 'file://', 'https://', '.\\', '..\\', '\\']
-let knownExts = ['.js', '.cjs', '.mjs', '.json', '.node', '.wasm'], empty = [[], []]
-
-export async function resolve(specifier, context, nextResolve) {
-  let prefix = winAbsPath.test(specifier) ? 'file://' : ''
-
-  if (!prefix && !relSpecs.includes(specifier) && !specStarts.some(p => specifier.startsWith(p))) {
-    return await nextResolve(specifier)
+  if (isBuiltin(specifier)) {
+    return next(specifier, context);
   }
 
-  let selfURL = new URL(prefix + specifier, context.parentURL).href
+  let error;
 
-  let {type} = context.importAttributes ?? context.importAssertions
-  let postfixes = (await initPromise, selfURL.endsWith('/') ? indexFiles : knownExts.includes(extname(selfURL)) ? empty : candidates)
-
-  for (let postfix of postfixes[+(type === 'json')]) {
+  const resolution = (() => {
+    // Try direct import
     try {
-      return await nextResolve(selfURL + postfix)
-    } catch {}
-  }
+      return moduleResolve(
+        specifier,
+        parentURL || import.meta.url,
+        new Set(context.conditions),
+      );
+    } catch (_error) {
+      error = _error;
+    }
 
-  return await nextResolve(selfURL)
+    // Try with added extensions
+    for (let i = 0; i < KNOWN_EXTS.length; i += 1) {
+      const knownExt = KNOWN_EXTS[i];
+
+      try {
+        return moduleResolve(
+          `${specifier}${knownExt}`,
+          parentURL || import.meta.url,
+          new Set(context.conditions),
+        );
+      } catch {
+        // continue regardless of error
+      }
+    }
+
+    // Try with added index file
+    for (let i = 0; i < INDEX_FILES.length; i += 1) {
+      const indexFile = INDEX_FILES[i];
+
+      try {
+        return moduleResolve(
+          `${specifier}/${indexFile}`,
+          parentURL || import.meta.url,
+          new Set(context.conditions),
+        );
+      } catch {
+        // continue regardless of error
+      }
+    }
+
+    // No imports worked => throw direct import error
+    throw error;
+  })();
+
+  return next(resolution.href, context);
 }
