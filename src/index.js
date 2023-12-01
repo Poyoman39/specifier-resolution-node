@@ -1,9 +1,6 @@
 import { isBuiltin } from 'node:module';
-import { cwd } from 'node:process';
 import { pathToFileURL } from 'node:url';
 import { moduleResolve } from 'import-meta-resolve';
-
-const baseURL = pathToFileURL(`${cwd()}/`).href;
 
 const KNOWN_EXTS = [
   '.js',
@@ -19,7 +16,7 @@ const INDEX_FILES = KNOWN_EXTS.map((knownExt) => (
 ));
 
 export async function resolve(specifier, context, next) {
-  const { parentURL = baseURL } = context;
+  const { parentURL = import.meta.url } = context;
 
   if (isBuiltin(specifier)) {
     return next(specifier, context);
@@ -32,7 +29,7 @@ export async function resolve(specifier, context, next) {
     try {
       return moduleResolve(
         specifier,
-        parentURL || import.meta.url,
+        parentURL,
         new Set(context.conditions),
       );
     } catch (_error) {
@@ -46,7 +43,7 @@ export async function resolve(specifier, context, next) {
       try {
         return moduleResolve(
           `${specifier}${knownExt}`,
-          parentURL || import.meta.url,
+          parentURL,
           new Set(context.conditions),
         );
       } catch {
@@ -61,7 +58,7 @@ export async function resolve(specifier, context, next) {
       try {
         return moduleResolve(
           `${specifier}/${indexFile}`,
-          parentURL || import.meta.url,
+          parentURL,
           new Set(context.conditions),
         );
       } catch {
