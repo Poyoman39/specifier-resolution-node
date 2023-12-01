@@ -1,8 +1,4 @@
-import { register } from 'node:module';
-import { argv } from 'node:process';
+import { register } from "node:module";
+import { pathToFileURL } from "node:url";
 
-register(
-  './index.js',
-  import.meta.url,
-  { data: { argv1: argv[1] } },
-);
+register('specifier-resolution-node', pathToFileURL('./'));
