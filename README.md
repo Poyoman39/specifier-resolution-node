@@ -5,7 +5,7 @@ Node.js loader for import specifiers as file paths without extensions or as dire
 Install:
 
 ```
-npm i extensionless
+npm i specifier-resolution-node
 ```
 
 &nbsp;
@@ -13,13 +13,13 @@ npm i extensionless
 Start `node` with one of the following flags added. If you're running on a version of node older than `20.6.0`, use:
 
 ```
---experimental-loader=extensionless
+--experimental-loader=specifier-resolution-node
 ```
 
 or else, use the newer one instead:
 
 ```
---import=extensionless/register
+--import=specifier-resolution-node/register
 ```
 
 &nbsp;
@@ -41,20 +41,6 @@ import api from '/apps/api'
 import web from 'file:///apps/web'
 // ['file:///apps/web.js', 'file:///apps/web/index.js']
 ```
-
-&nbsp;
-
-To configure this module, add the field `extensionless` to your project's `package.json`:
-
-```json
-"extensionless": {
-  "lookFor": ["js", "mjs", "cjs"]
-}
-```
-
-|   Field   | Default Value |
-| --------- | ------------- |
-| `lookFor` | `["js"]`      |
 
 &nbsp;
 
@@ -80,22 +66,4 @@ import api from '/apps/api/'
 
 import web from 'file:///apps/web/'
 // ['file:///apps/web/index.js']
-```
-
-&nbsp;
-
-This loader also adds support for Windows path resolution with which you can use forward or backward slashes as separators.
-
-```js
-import mod from '.\\mod'
-// ['./mod.js', './mod/index.js']
-
-import mod from '..\\mod\\' assert {type: 'json'}
-// ['../mod/index.json']
-
-import api from 'C:/apps/api'
-// ['/C:/apps/api.js', '/C:/apps/api/index.js']
-
-import web from 'C:\\apps\\web\\'
-// ['/C:/apps/web/index.js']
 ```

@@ -1,25 +1,45 @@
 {
-  "name": "extensionless",
-  "version": "1.7.3",
-  "type": "module",
-  "exports": {
-    ".": "./src/index.js",
-    "./register": "./src/register.js"
+  "name": "specifier-resolution-node",
+  "version": "0.0.1",
+  "main": "index.js",
+  "engines": {
+    "node": ">=20.0.0"
   },
-  "license": "MIT",
-  "description": "Node.js loader for import specifiers as file paths without extensions or as directory paths",
-  "keywords": [
-    "node", "nodejs",
-    "module", "loader", "resolver", "resolution",
-    "esm", "es6", "esnext", "ecmascript",
-    "extension", "filename", "directory", "path"
-  ],
-  "homepage": "https://github.com/barhun/extensionless#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/barhun/extensionless.git"
+    "url": "git+ssh://git@github.com:Poyoman39/specifier-resolution-node.git"
   },
   "scripts": {
-    "test": "node --import=./src/register.js test"
+    "check:update": "npm-check -u",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
+  "author": "Johan Maupetit (johan.maupetit@shapy.co)",
+  "license": "LGPL 2.1",
+  "description": "Node.js loader for import specifiers as file paths without extensions or as directory paths",
+  "keywords": [
+    "--experimental-specifier-resolution",
+    "specifier-resolution",
+    "node",
+    "nodejs",
+    "module",
+    "loader",
+    "resolver",
+    "resolution",
+    "esm",
+    "es6",
+    "esnext",
+    "ecmascript",
+    "extension",
+    "filename",
+    "directory",
+    "path",
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.19.1",
+    "@babel/eslint-parser": "^7.19.1",
+    "eslint": "^8.24.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "npm-check": "^6.0.1"
   }
 }

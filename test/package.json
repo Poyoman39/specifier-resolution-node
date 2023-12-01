@@ -1,6 +1,0 @@
-{
-  "type": "module",
-  "extensionless": {
-    "lookFor": ["js", "mjs"]
-  }
-}
