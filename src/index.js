@@ -1,5 +1,4 @@
 import { isBuiltin } from 'node:module';
-import { pathToFileURL } from 'node:url';
 import { moduleResolve } from 'import-meta-resolve';
 
 const KNOWN_EXTS = [
