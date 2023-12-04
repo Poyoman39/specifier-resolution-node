@@ -4,7 +4,7 @@ This package intends to help `experimental-specifier-resolution=node` users migr
 
 ---
 
-This package is based on the [extensionless project](https://www.npmjs.com/package/extensionless) project, but import [import-meta-resolve](https://www.npmjs.com/package/import-meta-resolve) algorithm so that it's closer to the behavior of node.js 18 with --experimental-loader=specifier-resolution-node
+This package is based on the [extensionless project](https://www.npmjs.com/package/extensionless) project, but use [import-meta-resolve](https://www.npmjs.com/package/import-meta-resolve) algorithm to get closer to the behavior of node.js 18 with --experimental-loader=specifier-resolution-node
 
 Particulary, it supports `imports: {}` when it's specified in `package.json`
 
