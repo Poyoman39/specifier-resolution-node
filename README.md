@@ -29,3 +29,15 @@ or else, use the newer one instead:
 ```
 
 You can now use import specifiers as file paths without extensions or as directory paths.
+
+---
+
+Customize:
+
+By default specifier-resolution-node will try to append the following extensions: `['js', 'cjs', 'mjs', 'json', 'node', 'wasm']`
+
+You can customize this behavior by setting the environment variable `KNOWN_EXTS` this way:
+
+```
+KNOWN_EXTS=js,ts,tsc node --import=specifier-resolution-node/register index.js
+```

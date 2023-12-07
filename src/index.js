@@ -1,17 +1,18 @@
 import { isBuiltin } from 'node:module';
 import { moduleResolve } from 'import-meta-resolve';
 
-const KNOWN_EXTS = [
-  '.js',
-  '.cjs',
-  '.mjs',
-  '.json',
-  '.node',
-  '.wasm',
+const KNOWN_EXTS = process.env.KNOWN_EXTS?.split(',') || [
+  'js',
+  'cjs',
+  'mjs',
+  'json',
+  'node',
+  'wasm',
 ];
 
+
 const INDEX_FILES = KNOWN_EXTS.map((knownExt) => (
-  `index${knownExt}`
+  `index.${knownExt}`
 ));
 
 export async function resolve(specifier, context, next) {
@@ -41,7 +42,7 @@ export async function resolve(specifier, context, next) {
 
       try {
         return moduleResolve(
-          `${specifier}${knownExt}`,
+          `${specifier}.${knownExt}`,
           parentURL,
           new Set(context.conditions),
         );
