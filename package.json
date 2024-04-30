@@ -10,6 +10,7 @@
   "engines": {
     "node": ">=20.0.0"
   },
+  "homepage": "https://github.com/Poyoman39/specifier-resolution-node#readme",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/Poyoman39/specifier-resolution-node.git"
