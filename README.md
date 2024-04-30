@@ -35,3 +35,7 @@ You can customize this behavior by setting the environment variable `KNOWN_EXTS`
 ```
 KNOWN_EXTS=js,ts,tsc node --import=specifier-resolution-node/register index.js
 ```
+
+## Debug:
+
+If you want to check why an import is not working you can set `SPECIFIER_RESOLUTION_NODE_DEBUG=true` environement variable
