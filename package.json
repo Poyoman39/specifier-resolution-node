@@ -13,7 +13,7 @@
   "homepage": "https://github.com/Poyoman39/specifier-resolution-node#readme",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/Poyoman39/specifier-resolution-node.git"
+    "url": "https://github.com/Poyoman39/specifier-resolution-node.git"
   },
   "scripts": {
     "check:update": "npm-check -u",
